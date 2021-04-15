@@ -10,8 +10,8 @@ from time import sleep as time_sleep
 
 
 sct = mss.mss()
-fov = 15
-next_to = 13
+fov = 100
+next_to = 25
 sens = 2.5
 if not fov:
     fov = int(input('FOV: '))
@@ -29,14 +29,8 @@ monitor = {
     'width': int(fov),
     'height': int(fov)
 }
-colors = [
-    (140, 97, 90),
-    (128, 82, 52),
-    (140, 68, 35),
-    (52, 46, 54),
-    (52, 52, 40),
-    (47, 55, 44)
-]
+green = (0, 255, 0)
+color = green
 nt_del = int(next_to / 2)
 fov_del = int(fov / 2)
 running = True
@@ -55,20 +49,22 @@ while True:
             sct_img = sct.grab(monitor)
             img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
             for i in range(monitor['width']):
+                breaked = False
                 for j in range(monitor['height']):
                     r, g, b = img.getpixel((i, j))[:3]
-                    breaked = False
-                    for color in colors:
-                        if color[0] - nt_del < r < color[0] + nt_del and color[1] - nt_del < g < color[1] + nt_del\
-                                and color[2] - nt_del < b < color[2] + nt_del:
+                    if color[0] - nt_del < r < color[0] + nt_del and color[1] - nt_del < g < color[1] + nt_del\
+                            and color[2] - nt_del < b < color[2] + nt_del:
+                        ccc = img.getpixel((fov_del - 4, fov_del - 4))
+                        if not ccc[0] - nt_del < r < ccc[0] + nt_del and not ccc[1] - nt_del < g < ccc[1] + nt_del\
+                                        and not ccc[2] - nt_del < b < ccc[2] + nt_del:
                             ctypes.windll.user32.mouse_event(
                                 ctypes.c_uint(0x0001),
-                                ctypes.c_uint(int((i - fov_del) / sens)),
-                                ctypes.c_uint(int((j - fov_del) / sens)),
+                                ctypes.c_uint(int((i - fov / 2) / sens)),
+                                ctypes.c_uint(int((j - fov / 2) / sens)),
                                 ctypes.c_uint(0),
                                 ctypes.c_uint(0)
                             )
                             breaked = True
                             break
-                    if breaked:
-                        break
+                if breaked:
+                    break
