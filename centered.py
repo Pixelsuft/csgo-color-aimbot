@@ -31,7 +31,7 @@ monitor = {
 }
 green = (0, 255, 0)
 drawothermodels2 = (0, 255, 255)
-color = drawothermodels2
+color = green
 nt_del = int(next_to / 2)
 fov_del = int(fov / 2)
 running = True
